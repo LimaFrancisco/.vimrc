@@ -17,47 +17,15 @@ syntax enable
 " Mostrar título da janela
 set title
 
-" Configurações do ALE para Python
-let g:ale_linters = {
-    \ 'python': ['flake8', 'mypy'],
-    \}
-let g:ale_fixers = {
-    \ 'python': ['black'],
-    \}
-let g:ale_python_flake8_executable = 'flake8'
-let g:ale_python_mypy_executable = 'mypy'
-
 " Ativar uso do mouse
 set mouse=a
 
 " Ativar busca incremental
 set incsearch
 
-" Configurações do Vim-Plug para gerenciar plugins
-call plug#begin('~/.vim/plugged')
-Plug 'leviosa42/vim-github-theme'
-Plug 'preservim/nerdtree'
-Plug 'davidhalter/jedi-vim'
-Plug 'Vimjas/vim-python-pep8-indent'
-Plug 'vim-syntastic/syntastic'
-Plug 'nvie/vim-flake8'
-Plug 'lambdalisue/vim-pyenv'
-Plug 'Valloric/YouCompleteMe'
-Plug 'airblade/vim-gitgutter'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'tpope/vim-commentary'
-call plug#end()
-
-let g:syntastic_python_checkers = ['flake8']
-let g:python_highlight_all = 1
-
-" Configurar esquema de cores
-if filereadable(expand("~/.vim/plugged/vim-github-theme/colors/github_dark_tritanopia.vim"))
-  colorscheme github_dark_tritanopia
-else
-  echo "Tema github_dark_tritanopia não encontrado!"
-endif
+" Suporte a folding
+set foldmethod=indent
+set foldlevel=99
 
 " Melhorias adicionais
 set nocompatible
@@ -70,18 +38,41 @@ set showcmd
 set showmode
 set showmatch
 
+" Configurações do Vim-Plug para gerenciar plugins
+call plug#begin('~/.vim/plugged')
+Plug 'leviosa42/vim-github-theme'
+Plug 'preservim/nerdtree'
+Plug 'davidhalter/jedi-vim'
+call plug#end()
+
+" Configurar esquema de cores
+if filereadable(expand("~/.vim/plugged/vim-github-theme/colors/github_dark_tritanopia.vim"))
+  colorscheme github_dark_tritanopia
+else
+  echo "Tema github_dark_tritanopia não encontrado!"
+endif
+
 " Configurações do NERDTree
 autocmd vimenter * if !argc() | NERDTree | endif
 map <F2> :NERDTreeToggle<CR>
 
-" Suporte a folding
-set foldmethod=indent
-set foldlevel=99
+" Desativar a criação de arquivos .swp
+set noswapfile
 
-" Navegação entre buffers
-nnoremap <silent> <TAB> :bnext<CR>
-nnoremap <silent> <S-TAB> :bprevious<CR>
+let g:ale_linters = {
+\   'python': ['flake8', 'bandit'],
+\}
 
-" Configuração do YouCompleteMe
-let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+" Python """"""""""""""""""""""""""""""""""""""""""""
+let g:ale_python_flake8_options = '--max-line-length=100 --extend-ignore=E203'
 
+let g:ale_fixers = {
+\   '*': ['trim_whitespace'],
+\   'python': ['black', 'isort'],
+\}
+
+ let g:ale_python_black_options = '--line-length 100'
+ let g:ale_python_isort_options = '--profile black -l 100'
+
+ nnoremap tp :!python %<cr>
+ 
